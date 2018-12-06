@@ -4,6 +4,8 @@ import Register from './application/screens/Register'
 import Preloader from './application/components/Preloader'
 import GuestNavigation from './application/navigation/guest'
 
+console.disableYellowBox = true;
+
 export default class App extends Component {
 
   constructor() {
