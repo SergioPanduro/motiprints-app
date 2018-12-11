@@ -1,25 +1,27 @@
 import React, {Component} from 'react'
-import {StyleSheet, ScrollView, KeyboardAvoidingView, Dimensions, Linking, View} from 'react-native'
+import {StyleSheet, ScrollView, KeyboardAvoidingView, Dimensions, Linking, View, Alert} from 'react-native'
 import {LinearGradient} from 'expo'
 import {TextInput, Button, Checkbox, Paragraph, TouchableRipple} from 'react-native-paper'
 import Toast from 'react-native-root-toast'
+import {NavigationActions} from 'react-navigation'
+import {URL} from '../utils/server'
 
 const {width} = Dimensions.get('window')
 
-export default class Login extends Component {
+export default class Register extends Component {
 
-	constructor() {
+	constructor() { 
         super()
         
         this.state = {
             name: '',
-            surname: '',
+            lastname: '',
             email: '',
             password: '',
             sPassword: '',
             politics: 'unchecked',
             validName: {isValid: false, message: ''},
-            validSurname: {isValid: false, message: ''},
+            validLastname: {isValid: false, message: ''},
             validEmail: {isValid: false, message: ''},
             validPassword: {isValid: false, message: ''},
             validSPassword: {isValid: false, message: ''},
@@ -32,10 +34,47 @@ export default class Login extends Component {
         isOk = this.validations()
 
         if (isOk) {
-            Toast.show('Se va a crear la cuenta', {
-                duration: Toast.durations.LONG,
-                hideOnPress: true,
+            fetch(`${URL}/register`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    name: this.state.name,
+                    lastname: this.state.lastname,
+                    email: this.state.email,
+                    password: this.state.password,
+                    role: 'USER_ROLE'
+                }),
+                headers: {'Content-Type': 'application/json'}
             })
+                .then(response => {
+                    if (response.ok === true) {
+                        Alert.alert(
+                            'Se creó tu cuenta',
+                            'Muy pronto te llegará un mensaje de confirmación a tu cuenta de email. Confirma para continuar.',
+                            [{
+                                text: 'Aceptar',
+                                onPress: () => {
+                                    const navigateAction = NavigationActions.navigate({
+                                        routeName: 'Start'
+                                    })
+                                    this.props.navigation.dispatch(navigateAction)
+                                }
+                            }]
+                        )
+                    }
+                    if (response.ok === false) {
+                        Toast.show('Error al crear la cuenta', {
+                            duration: Toast.durations.LONG,
+                            hideOnPress: true,
+                        })
+                    }
+                    console.log(response)
+                })
+                .catch(error => {
+                    Toast.show('Error de conexión, intentalo más tarde', {
+                        duration: Toast.durations.LONG,
+                        hideOnPress: true,
+                    })
+                })
         }
     }
 
@@ -51,12 +90,12 @@ export default class Login extends Component {
             this.setState({validName: {isValid: true, message: ''}})
         }
 
-        if (!this.state.surname) {
-            this.setState({validSurname: {isValid: false, message: 'Debes agregar un apellido'}})
-        } else if (!nameRule.test(this.state.surname)) {
-            this.setState({validSurname: {isValid: false, message: 'El apellido debe contener letras solamente'}})
+        if (!this.state.lastname) {
+            this.setState({validLastname: {isValid: false, message: 'Debes agregar un apellido'}})
+        } else if (!nameRule.test(this.state.lastname)) {
+            this.setState({validLastname: {isValid: false, message: 'El apellido debe contener letras solamente'}})
         } else {
-            this.setState({validSurname: {isValid: true, message: ''}})
+            this.setState({validLastname: {isValid: true, message: ''}})
         }
 
         if (!this.state.email) {
@@ -99,7 +138,7 @@ export default class Login extends Component {
 
     validate = () => {
         if (this.state.validName.isValid &&
-            this.state.validSurname.isValid &&
+            this.state.validLastname.isValid &&
             this.state.validEmail.isValid &&
             this.state.validPassword.isValid &&
             this.state.validSPassword &&
@@ -110,8 +149,6 @@ export default class Login extends Component {
             return false
         }
     }
-
-    _closeDialog = () => this.setState({validPolitics: {visible: false}});
 
 	render () {
 		return (
@@ -154,16 +191,16 @@ export default class Login extends Component {
                             style={styles.inputContainerStyle}
                             label="Apellido(s)"
                             placeholder="Escribe tu apellido"
-                            value={this.state.surname}
-                            onChangeText={surname => this.setState({surname})}
+                            value={this.state.lastname}
+                            onChangeText={lastname => this.setState({lastname})}
                         />
 
                         {
-                            !this.state.validSurname.isValid &&
+                            !this.state.validLastname.isValid &&
                                 <View 
                                     style={{alignItems: 'center'}}
                                 >
-                                    <Paragraph style={styles.text}>{this.state.validSurname.message}</Paragraph>
+                                    <Paragraph style={styles.text}>{this.state.validLastname.message}</Paragraph>
                                 </View>
                         }
 

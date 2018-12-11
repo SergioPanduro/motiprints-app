@@ -1,8 +1,7 @@
 import React, {Component} from 'react'
 import { StyleSheet, Text, View } from 'react-native'
-import Register from './application/screens/Register'
 import Preloader from './application/components/Preloader'
-import GuestNavigation from './application/navigation/guest'
+import SwitchStack from './application/navigation/switch'
 
 console.disableYellowBox = true;
 
@@ -11,23 +10,27 @@ export default class App extends Component {
   constructor() {
     super()
     this.state = {
-      isLogged: false,
       loaded: false
     }
   }
 
   componentDidMount() {
     this.setState({
-      isLogged: false,
       loaded: true
     })
   }
 
   render() {
-    const {isLogged, loaded} = this.state;
+    const {loaded} = this.state;
+
+    if (!loaded) {
+      return (
+        <Preloader />
+      )
+    }
 
     return (
-      <GuestNavigation />
+      <SwitchStack />
     )
   }
 }

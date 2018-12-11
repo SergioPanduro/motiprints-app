@@ -16,6 +16,12 @@ export default class Start extends Component {
 		this.props.navigation.dispatch(navigateAction);
     }
     
+    loginEmail () {
+        const navigateAction = NavigationActions.navigate({
+			routeName: 'Login'
+		});
+		this.props.navigation.dispatch(navigateAction);
+    }
     //TODO: Agregar metodos async de login con redes sociales
 
     
@@ -43,7 +49,7 @@ export default class Start extends Component {
                                 color={"#6ea9ff"}
                             />
                         )}
-                        onPress={() => {}}
+                        onPress={this.loginEmail.bind(this)}
                         style={styles.btn}
                         color="#fff"
                     >

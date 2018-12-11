@@ -1,7 +1,7 @@
 import React from 'react'
 import {createStackNavigator, createAppContainer} from "react-navigation"
 import StartScreen from "../screens/Start"
-/* import LoginScreen from "../screens/Login" */
+import LoginScreen from "../screens/Login"
 import RegisterScreen from '../screens/Register'
 
 const guestStack =  createStackNavigator(
@@ -12,9 +12,12 @@ const guestStack =  createStackNavigator(
                 header: null
             })
 		},
-		/* Login: {
-			screen: LoginScreen
-		},  */
+		Login: {
+			screen: LoginScreen,
+			navigationOptions: () => ({
+                title: 'Iniciar sesión'
+            })
+		}, 
 		Register: {
 			screen: RegisterScreen,
 			navigationOptions: () => ({
@@ -23,9 +26,8 @@ const guestStack =  createStackNavigator(
 		}
 	},
 	{
-		initialRouteName: 'Start',
-        gesturesEnabled: false
+		initialRouteName: 'Start'
 	}
 )
 
-export default createAppContainer(guestStack)
+export default guestStack
